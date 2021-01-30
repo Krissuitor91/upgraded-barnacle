@@ -61,17 +61,21 @@ class AlienInvasion:
         """Start new game when player clicks play."""
         button_clicked = self.play_button.rect.collidepoint(mouse_pos)
         if button_clicked and not self.stats.game_active:
-            self.stats.reset_stats()
-            self.stats.game_active = True
+            self.settings.initialize_dynamic_settings()
+            self._start_game()
 
-            """Reset ship and fleet."""
-            self.aliens.empty()
-            self.bullets.empty()
-            self._create_fleet()
-            self.ship.center_ship()
+    def _start_game(self):
+        self.stats.reset_stats()
+        self.stats.game_active = True
 
-            """Hide the mouse cursor."""
-            pygame.mouse.set_visible(False)
+        """Reset ship and fleet."""
+        self.aliens.empty()
+        self.bullets.empty()
+        self._create_fleet()
+        self.ship.center_ship()
+
+        """Hide the mouse cursor."""
+        pygame.mouse.set_visible(False)
 
     def _check_keydown_events(self, event):
         """Respond to key presses."""
@@ -84,6 +88,8 @@ class AlienInvasion:
         elif event.key == pygame.K_q:
             pygame.quit()
             sys.exit()
+        elif event.key == pygame.K_p and not self.stats.game_active:
+            self._start_game()
 
     def _check_keyup_events(self, event):
         """Respond to key releases."""
@@ -116,6 +122,7 @@ class AlienInvasion:
         if not self.aliens:
             self.bullets.empty()
             self._create_fleet()
+            self.settings.increase_speed()
 
     def _ship_hit(self):
         """Respond to the ship being hit by an alien."""
